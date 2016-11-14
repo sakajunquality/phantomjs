@@ -33,19 +33,19 @@ src_dir  = node['phantomjs']['src_dir']
 basename = node['phantomjs']['basename']
 checksum = node['phantomjs']['checksum']
 
-remote_file "#{src_dir}/#{basename}.tar.bz2" do
+remote_file "#{src_dir}/#{basename}.tar.gz" do
   owner     'root'
   group     'root'
   mode      '0644'
   backup    false
-  source    "#{base_url}/#{basename}.tar.bz2"
+  source    "#{base_url}/#{basename}.tar.gz"
   checksum  checksum if checksum
   not_if    { ::File.exists?('/usr/local/bin/phantomjs') && `/usr/local/bin/phantomjs --version`.chomp == version }
   notifies  :run, 'execute[phantomjs-install]', :immediately
 end
 
 execute 'phantomjs-install' do
-  command   "tar -xvjf #{src_dir}/#{basename}.tar.bz2 -C /usr/local/"
+  command   "tar -xzvf #{src_dir}/#{basename}.tar.gz -C /usr/local/"
   action    :nothing
   notifies  :create, 'link[phantomjs-link]', :immediately
 end
